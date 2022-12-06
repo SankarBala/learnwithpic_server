@@ -18,10 +18,9 @@ return new class extends Migration
             $table->bigInteger('user_id')->default(0);
             $table->ipAddress('ip');
             $table->string('route');
-            $table->string('country')->nullable();
-            $table->string('device')->nullable();
             $table->string('user_agent');
-            $table->string('refferer');
+            $table->string('location', 1000)->nullable();
+            $table->string('refferer')->nullable();
             $table->timestamps();
         });
     }

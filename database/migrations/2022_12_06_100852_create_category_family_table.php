@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('post_tag', function (Blueprint $table) {
-            $table->bigInteger('post_id');
-            $table->bigInteger('tag_id');
-            $table->unique(['post_id', 'tag_id']);
+        Schema::create('category_family', function (Blueprint $table) {
+            $table->bigInteger('parent_id');
+            $table->bigInteger('child_id');
+            $table->unique(['parent_id', 'child_id']);
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('post_tag');
+        Schema::dropIfExists('category_family');
     }
 };

@@ -9,13 +9,28 @@ class Post extends Model
 {
     use HasFactory;
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
     public function steps()
     {
         return $this->hasMany(Step::class);
     }
-    public function user()
+
+    public function comments()
     {
-        return $this->belongsTo(User::class);
-        // return $this->hasMany(Comment::class);
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }

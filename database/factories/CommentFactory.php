@@ -17,7 +17,10 @@ class CommentFactory extends Factory
     public function definition()
     {
         return [
-            //
+            "user_id" => 1,
+            "content" => fake()->realText(),
+            "commentable_id" => rand(1, 10),
+            "commentable_type" => "App\Models\Post"
         ];
     }
 }
