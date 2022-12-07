@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id')->default(0);
             $table->string('content')->nullable();
-            $table->string('like')->nullable();
+            $table->integer('like')->default(0);
             $table->morphs('commentable');
             $table->timestamps();
         });

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Tag\TagCreateRequest;
+use App\Http\Requests\Tag\TagUpdateRequest;
 use App\Models\Tag;
-use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TagController extends Controller
 {
@@ -14,7 +16,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::all();
+        return response()->json($tags, 200);
     }
 
     /**
@@ -23,9 +26,14 @@ class TagController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TagCreateRequest $request)
     {
-        //
+        $tag = new Tag();
+        $tag->name = $request->name;
+        $tag->slug = $request->slug ?? Str::slug($request->name);
+        $tag->save();
+
+        return response()->json(['message' => 'Tag created successfully'], 201);
     }
 
     /**
@@ -36,7 +44,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        //
+        return response()->json($tag, 200);
     }
 
     /**
@@ -46,9 +54,15 @@ class TagController extends Controller
      * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tag $tag)
+    public function update(TagUpdateRequest $request, Tag $tag)
     {
-        //
+        $request->validated();
+
+        $tag->name = $request->name;
+        $tag->slug = $request->slug;
+        $tag->save();
+
+        return response()->json(['message' => trans('Tag updated successfully')], 202);
     }
 
     /**
@@ -59,6 +73,7 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+        return response()->json(['message' => trans('Tag deleted successfully')], 200);
     }
 }

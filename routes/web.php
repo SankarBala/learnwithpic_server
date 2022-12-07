@@ -14,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::fallback(function () {
+Route::get('/', function () {
     dd(Category::find(1));
-})->middleware('visitor');
+});

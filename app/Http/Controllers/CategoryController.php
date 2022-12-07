@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Category\CategoryCreateRequest;
+use App\Http\Requests\Category\CategoryUpdateRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -14,7 +16,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return response()->json($categories, 200);
     }
 
     /**
@@ -23,9 +26,16 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryCreateRequest $request)
     {
-        //
+        $request->validated();
+
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = $request->slug ?? Str::slug($request->name);
+        $category->save();
+
+        return response()->json($category, 201);
     }
 
     /**
@@ -36,7 +46,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return response()->json($category, 200);
     }
 
     /**
@@ -46,9 +56,15 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryUpdateRequest $request, Category $category)
     {
-        //
+        $request->validated();
+
+        $category->name = $request->name;
+        $category->slug = $request->slug;
+        $category->save();
+
+        return response()->json(['message' => trans('Category Updated Successfully')], 202);
     }
 
     /**
@@ -59,6 +75,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        return response()->json(['message'=> trans('Category deleted successfully')], 200);
     }
 }
