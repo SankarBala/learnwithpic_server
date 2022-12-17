@@ -37,8 +37,10 @@ class CategoryUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "required|string|min:1|max:100|unique:categories,name," . $this->category->id,
-            "slug" => "required|string|min:1|max:100|unique:categories,slug," . $this->category->id
+            "name" => "nullable|string|min:3|max:100|unique:categories,name," . $this->category->id,
+            "slug" => "nullable|string|min:3|max:100|unique:categories,slug," . $this->category->id,
+            "parent" => "array|nullable",
+            "children" => "array|nullable"
         ];
     }
 }

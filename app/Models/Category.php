@@ -9,6 +9,8 @@ class Category extends Model
 {
     use HasFactory;
 
+    protected $visible = ['id', 'name', 'slug', 'children', 'parents'];
+
     public function posts()
     {
         return $this->belongsToMany(Post::class);

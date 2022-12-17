@@ -16,7 +16,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::all();
+        $tags = Tag::with("posts")->get();
         return response()->json($tags, 200);
     }
 
@@ -56,10 +56,11 @@ class TagController extends Controller
      */
     public function update(TagUpdateRequest $request, Tag $tag)
     {
+
         $request->validated();
 
         $tag->name = $request->name;
-        $tag->slug = $request->slug;
+        $tag->slug = $request->slug ?? $tag->slug;
         $tag->save();
 
         return response()->json(['message' => trans('Tag updated successfully')], 202);
@@ -73,7 +74,9 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
+        $tag->posts()->detach();
         $tag->delete();
+
         return response()->json(['message' => trans('Tag deleted successfully')], 200);
     }
 }
