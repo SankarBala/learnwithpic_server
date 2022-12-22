@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Post\PostCreateRequest;
 use App\Http\Requests\Post\PostUpdateRequest;
 use App\Models\Post;
+use App\Models\Tag;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -25,9 +30,26 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PostCreateRequest $request)
+    public function store(Request $request)
     {
-        $request->validated();
+        // $request->validated();
+
+        // $base64_str = substr($request->image->document3, strpos($request->image->document3, ",") + 1);
+
+        // Log::debug($base64_str);
+        //decode base64 string
+        // $image = base64_decode($request->image);
+        // Log::debug($image);
+
+        // $safeName = Str::random(10) . '.' . 'png';
+
+        // $file = Storage::disk('public')->put('eejaz/' . $safeName, $image);
+
+        // Log::debug($file);
+
+        // return;
+
+
 
         $post = Post::create([
             'title' => $request->title,
@@ -36,7 +58,17 @@ class PostController extends Controller
             'image' => $request->image
         ]);
 
-        return response()->json($post, 201);
+        $post->categories()->sync($request->categories);
+
+
+        $tags = [];
+        foreach ($request->tags as $index => $tag) {
+            $tag = Tag::firstOrCreate(["name" => $tag, "slug" => Str::slug($tag)]);
+            array_push($tags, $tag->id);
+        }
+        $post->tags()->sync($tags);
+
+        return response()->json(['message' => trans('Post created succesfully')], 201);
     }
 
     /**
@@ -79,6 +111,6 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
-        return response()->json(['messege' => trans('Post deleted succesfully')], 200);
+        return response()->json(['message' => trans('Post deleted succesfully')], 200);
     }
 }
