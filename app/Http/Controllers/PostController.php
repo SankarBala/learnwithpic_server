@@ -30,36 +30,16 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostCreateRequest $request)
     {
-        // $request->validated();
-
-        // $base64_str = substr($request->image->document3, strpos($request->image->document3, ",") + 1);
-
-        // Log::debug($base64_str);
-        //decode base64 string
-        // $image = base64_decode($request->image);
-        // Log::debug($image);
-
-        // $safeName = Str::random(10) . '.' . 'png';
-
-        // $file = Storage::disk('public')->put('eejaz/' . $safeName, $image);
-
-        // Log::debug($file);
-
-        // return;
-
-
+        $request->validated();
 
         $post = Post::create([
-            'title' => $request->title,
-            'slug' => $request->slug,
-            'content' => $request->content,
-            'image' => $request->image
+            "title" => $request->title,
+            "slug" => $request->slug
         ]);
 
         $post->categories()->sync($request->categories);
-
 
         $tags = [];
         foreach ($request->tags as $index => $tag) {
@@ -67,6 +47,23 @@ class PostController extends Controller
             array_push($tags, $tag->id);
         }
         $post->tags()->sync($tags);
+
+        if ($data = $request->image) {
+            // $data = $request->image;
+            list($type, $data) = explode(';', $data);
+            list($element, $mime) = explode(':', $type);
+            list($variant, $ext) = explode('/', $mime);
+            list($encoder, $data)      = explode(',', $data);
+
+            $file = "posts/featured_images/" . time() . ".$ext";
+            Storage::disk('public')->put($file, base64_decode($data));
+
+            $post->image = Storage::url($file);
+        }
+
+        $post->save();
+
+        return $post;
 
         return response()->json(['message' => trans('Post created succesfully')], 201);
     }

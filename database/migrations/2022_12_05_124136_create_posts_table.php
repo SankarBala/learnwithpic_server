@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('user_id')->default(0);
             $table->string('title')->nullable();
             $table->string('slug')->unique();
-            $table->string('content')->nullable();
+            // $table->string('content')->nullable();
             $table->string('image')->nullable();
             $table->integer('view_count')->default(0);
             $table->timestamps();

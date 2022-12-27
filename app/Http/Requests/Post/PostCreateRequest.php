@@ -49,7 +49,6 @@ class PostCreateRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
-            'content' => 'string|nullable',
             'image' => 'string|nullable',
             'slug' => 'required|string|min:3|max:255|unique:posts'
         ];

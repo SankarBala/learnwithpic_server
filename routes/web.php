@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Category;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +15,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('login', function(){
+    Auth::login(User::find(1));
+})->name('login');
 
-Route::get('/', function () {
-    dd(Category::find(1));
+
+
+Route::get('/file-manager', function () {
+   return view("admin.filemanager");
 });
