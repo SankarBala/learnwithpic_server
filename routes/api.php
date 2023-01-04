@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StepController;
 use App\Http\Controllers\TagController;
@@ -28,3 +29,5 @@ Route::apiResource('category', CategoryController::class)->scoped(['category' =>
 Route::apiResource('tag', TagController::class)->scoped(['tag' => 'slug']);
 Route::apiResource('post', PostController::class)->scoped(['post' => 'slug']);
 Route::apiResource('step', StepController::class)->scoped(['step' => 'slug']);
+
+Route::post('file-manager/ckeditor/upload', [FileController::class, 'saveCKEditorImage']);

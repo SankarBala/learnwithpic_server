@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Post\PostCreateRequest;
 use App\Http\Requests\Post\PostUpdateRequest;
 use App\Models\Post;
+use App\Models\Step;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -32,6 +33,7 @@ class PostController extends Controller
      */
     public function store(PostCreateRequest $request)
     {
+
         $request->validated();
 
         $post = Post::create([
@@ -63,9 +65,12 @@ class PostController extends Controller
 
         $post->save();
 
-        return $post;
-
-        return response()->json(['message' => trans('Post created succesfully')], 201);
+        foreach ($request->steps as $step) {
+            // Step::create([...$step, 'post_id' => $post->id]);
+            $post->steps()->save(Step::create($step));
+        }
+      
+        return response()->json(['message' => trans('Post saved succesfully')], 201);
     }
 
     /**

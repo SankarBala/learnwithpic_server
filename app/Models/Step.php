@@ -9,6 +9,8 @@ class Step extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['post_id', 'title', 'content'];
+
     public function post()
     {
         return $this->belongsTo(Post::class);

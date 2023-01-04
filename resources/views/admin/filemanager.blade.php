@@ -11,14 +11,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('vendor/file-manager/css/file-manager.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/file-manager/css/file-manager-fullscreen.css') }}">
 
 </head>
 
-<body class="antialiased" oncontextmenu="return false;">
-    <div id="fm" style="height: 600px;"></div>
+<body class="antialiased"  style="width:98%" oncontextmenu="return false;">
+    <div id="fm"></div>
 
-    <script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
+    <script src="{{ asset('vendor/file-manager/js/file-manager-fullscreen.js') }}"></script>
 </body>
 
 </html>
