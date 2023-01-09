@@ -7,6 +7,7 @@ use App\Http\Requests\Post\PostUpdateRequest;
 use App\Models\Post;
 use App\Models\Step;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +22,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::paginate(10);
+
+        // dd(Post::find(1)->categories()->get());
+
+        $posts = Post::with(['author', 'categories', 'tags', 'comments'])->paginate();
         return response()->json($posts, 200);
     }
 
@@ -69,7 +73,7 @@ class PostController extends Controller
             // Step::create([...$step, 'post_id' => $post->id]);
             $post->steps()->save(Step::create($step));
         }
-      
+
         return response()->json(['message' => trans('Post saved succesfully')], 201);
     }
 
@@ -114,5 +118,56 @@ class PostController extends Controller
     {
         $post->delete();
         return response()->json(['message' => trans('Post deleted succesfully')], 200);
+    }
+
+
+    /**
+     * Execute the specified action as required.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function execute(Request $request)
+    {
+        $action = $request->action;
+        $items = $request->items;
+
+
+        if ($action == "publish") {
+            foreach ($items as $item) {
+                $post = Post::find($item);
+                $post->status = 'published';
+                $post->save();
+            }
+        } elseif ($action == "draft") {
+            foreach ($items as $item) {
+                $post = Post::find($item);
+                $post->status = 'draft';
+                $post->save();
+            }
+        } elseif ($action == "delete") {
+            foreach ($items as $item) {
+                $post = Post::find($item);
+                $post->delete();
+            }
+        } else {
+            return abort(400);
+            // return response()->json(['message'=>'Sorry command didn\'t executed'], 500);
+        }
+
+        return response()->json(['message' => 'Command successfully executed'], 202);
+    }
+
+
+
+    public function created_months()
+    {
+        $months = Post::selectRaw('DATE_FORMAT(created_at, "%M %Y") as month')
+            ->groupBy('month')
+            ->get()
+            ->pluck('month')
+            ->toArray();
+
+        return response()->json(['months' => $months], 200);
     }
 }

@@ -18,11 +18,11 @@ class TagSeeder extends Seeder
     {
         Tag::factory(10)->create();
 
-        // $tags = Tag::all();
-        // $posts = Post::all();
+        $tags = Tag::all();
+        $posts = Post::all();
 
-        // foreach ($posts as $index => $post) {
-        //     $post->tags()->attach($tags[$index]);
-        // }
+        foreach ($posts as $index => $post) {
+            $post->tags()->attach($tags[$index]);
+        }
     }
 }

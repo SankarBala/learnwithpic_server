@@ -10,6 +10,12 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+
+    public function __construct()
+    {
+        //
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +23,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::with(['parents', 'children'])->get();
+        $categories = Category::with(['parents', 'children', 'posts'])->get();
         return response()->json($categories, 200);
     }
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->bigInteger('post_id')->default(0);
             $table->string('title')->nullable();
             $table->string('content')->nullable();
+            $table->tinyInteger('order')->default(0);
             $table->timestamps();
         });
     }

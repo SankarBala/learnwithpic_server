@@ -9,7 +9,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $visible = ['id', 'name', 'slug', 'children', 'parents'];
+    protected $visible = ['id', 'name', 'slug', 'children', 'parents', 'posts'];
 
     public function posts()
     {

@@ -21,6 +21,9 @@ return new class extends Migration
             // $table->string('content')->nullable();
             $table->string('image')->nullable();
             $table->integer('view_count')->default(0);
+            $table->string('status')->default('published');
+            $table->string('available')->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,15 +13,20 @@ class Post extends Model
     protected $fillable = ['title', 'slug', 'content', 'image'];
 
 
-
-    public function user()
+    public function getCreatedAtAttribute($value)
     {
-        return $this->belongsTo(User::class);
+        return Carbon::parse($value)->format('Y-m-d h:i A');
+    }
+
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'category_post', 'category_id', 'post_id');
     }
 
     public function tags()
