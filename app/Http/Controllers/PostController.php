@@ -9,6 +9,7 @@ use App\Models\Step;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -20,12 +21,11 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filters = $request->all();
+        $posts = Post::filter($filters)->with(['author', 'categories', 'tags', 'comments'])->paginate();
 
-        // dd(Post::find(1)->categories()->get());
-
-        $posts = Post::with(['author', 'categories', 'tags', 'comments'])->paginate();
         return response()->json($posts, 200);
     }
 
@@ -85,6 +85,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $post->load(['categories',  'tags', 'steps']);
         return response()->json($post, 200);
     }
 
