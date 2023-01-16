@@ -24,7 +24,7 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $filters = $request->all();
-        $posts = Post::filter($filters)->with(['author', 'categories', 'tags', 'comments'])->paginate();
+        $posts = Post::filter($filters)->with(['author', 'categories', 'steps', 'tags', 'comments'])->orderBy('id', 'desc')->paginate();
 
         return response()->json($posts, 200);
     }
@@ -69,6 +69,7 @@ class PostController extends Controller
 
         $post->save();
 
+
         foreach ($request->steps as $step) {
             // Step::create([...$step, 'post_id' => $post->id]);
             $post->steps()->save(Step::create($step));
@@ -96,15 +97,53 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(PostUpdateRequest $request, Post $post)
+    public function update(Request $request, Post $post)
     {
-        $request->validated();
 
-        $post->title = $request->title;
-        $post->slug = $request->slug;
-        $post->content = $request->content;
-        $post->image = $request->image;
+        // $request->validated();
+
+        // $post->title =  $request->title;
+        // $post->slug = $request->slug;
+        // $post->categories()->sync($request->categories);
+        // $tags = [];
+
+        // foreach ($request->tags as $index => $tag) {
+        //     $old_tag = Tag::find($tag["id"]);
+        //     if ($old_tag == null) {
+        //         $old_tag = Tag::create(["name" => $tag["name"], "slug" => Str::slug($tag["name"])]);
+        //     }
+        //     array_push($tags, $old_tag->id);
+        // }
+
+        // $post->tags()->sync($tags);
+
+
+        if ($data = $request->image) {
+            if ($post->image !== $request->image) {
+                list($type, $data) = explode(';', $data);
+                list($element, $mime) = explode(':', $type);
+                list($variant, $ext) = explode('/', $mime);
+                list($encoder, $data)      = explode(',', $data);
+
+                $file = "posts/featured_images/" . time() . ".$ext";
+                Storage::disk('public')->put($file, base64_decode($data));
+
+                $post->image = Storage::url($file);
+                Log::debug("new ");
+            }else{
+                Log::debug("not");
+            }
+        }
+
+
         $post->save();
+
+
+        // foreach ($request->steps as $step) {
+        //     // Step::create([...$step, 'post_id' => $post->id]);
+        //     $post->steps()->save(Step::create($step));
+        // }
+
 
         return response()->json($post, 202);
     }

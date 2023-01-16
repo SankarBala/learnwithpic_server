@@ -18,6 +18,10 @@ class Post extends Model
         return Carbon::parse($value)->format('Y-m-d h:i A');
     }
 
+    public function getImageAttribute($value){
+        return "http://localhost:8000/storage/posts/featured_images/1673871207.png";
+    }
+
 
     public function author()
     {
@@ -50,6 +54,10 @@ class Post extends Model
     {
         if (isset($filters['status'])) {
             $query->where('status', 'like', '%' . $filters['status'] . '%');
+        }
+
+        if (isset($filters['author'])) {
+            $query->where('user_id', '=', $filters['author']);
         }
 
         if (isset($filters['category'])) {

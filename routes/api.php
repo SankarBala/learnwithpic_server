@@ -27,7 +27,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::apiResource('/category', CategoryController::class)->scoped(['category' => 'slug']);
+Route::get('just-categories', [CategoryController::class, 'just_categories'])->name('just-categories');
+
+
 Route::apiResource('/tag', TagController::class)->scoped(['tag' => 'slug']);
+Route::get('just-tags', [TagController::class, 'just_tags'])->name('just-tags');
 
 // Post related routes
 Route::post('/post/execute', [PostController::class, 'execute'])->name('post.action');
