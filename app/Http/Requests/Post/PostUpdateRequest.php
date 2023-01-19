@@ -38,7 +38,6 @@ class PostUpdateRequest extends FormRequest
         return [
             'title' => 'required|string',
             'content' => 'string|nullable',
-            'image' => 'image|nullable',
             'slug' => 'required|string|min:3|max:255|unique:posts,slug,' . $this->post->id
         ];
     }

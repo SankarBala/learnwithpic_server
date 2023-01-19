@@ -10,6 +10,7 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -64,10 +65,11 @@ class PostController extends Controller
             $file = "posts/featured_images/" . time() . ".$ext";
             Storage::disk('public')->put($file, base64_decode($data));
 
-            $post->image = Storage::url($file);
+            $post->image = $file;
         }
 
         $post->save();
+
 
 
         foreach ($request->steps as $step) {
@@ -86,6 +88,17 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+
+        $data = Storage::disk('public')->get($post->image ?? "");
+
+        if ($data) {
+            $post->imageData = "data:image/png;base64," . base64_encode($data);
+        } else {
+            $post->imageData = null;
+        }
+
+        $post->image = asset(Storage::url($post->image));
+
         $post->load(['categories',  'tags', 'steps']);
         return response()->json($post, 200);
     }
@@ -97,29 +110,31 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostUpdateRequest $request, Post $post)
     {
+        Log::debug($request->steps);
 
-        // $request->validated();
+        $request->validated();
 
-        // $post->title =  $request->title;
-        // $post->slug = $request->slug;
-        // $post->categories()->sync($request->categories);
-        // $tags = [];
+        $post->title =  $request->title;
+        $post->slug = $request->slug;
+        $post->categories()->sync($request->categories);
+        $tags = [];
 
-        // foreach ($request->tags as $index => $tag) {
-        //     $old_tag = Tag::find($tag["id"]);
-        //     if ($old_tag == null) {
-        //         $old_tag = Tag::create(["name" => $tag["name"], "slug" => Str::slug($tag["name"])]);
-        //     }
-        //     array_push($tags, $old_tag->id);
-        // }
+        foreach ($request->tags as $index => $tag) {
+            $old_tag = Tag::find($tag["id"]);
+            if ($old_tag == null) {
+                $old_tag = Tag::create(["name" => $tag["name"], "slug" => Str::slug($tag["name"])]);
+            }
+            array_push($tags, $old_tag->id);
+        }
 
-        // $post->tags()->sync($tags);
+        $post->tags()->sync($tags);
 
 
         if ($data = $request->image) {
-            if ($post->image !== $request->image) {
+            if (asset(Storage::url($post->image)) !== $request->image) {
+                Log::debug($request->image);
                 list($type, $data) = explode(';', $data);
                 list($element, $mime) = explode(':', $type);
                 list($variant, $ext) = explode('/', $mime);
@@ -128,24 +143,25 @@ class PostController extends Controller
                 $file = "posts/featured_images/" . time() . ".$ext";
                 Storage::disk('public')->put($file, base64_decode($data));
 
-                $post->image = Storage::url($file);
-                Log::debug("new ");
-            }else{
-                Log::debug("not");
+                $post->image = $file;
+            }
+        } else {
+            $post->image = null;
+        }
+
+        $post->save();
+
+        foreach ($request->steps as $step) {
+            $old_step = Step::find($step["id"]);
+            if ($old_step == null) {
+                $post->steps()->save(Step::create(["title" => $step["title"], "content" => $step["content"]]));
+            } else {
+                $old_step->update(["title" => $step["title"], "content" => $step["content"]]);
             }
         }
 
 
-        $post->save();
-
-
-        // foreach ($request->steps as $step) {
-        //     // Step::create([...$step, 'post_id' => $post->id]);
-        //     $post->steps()->save(Step::create($step));
-        // }
-
-
-        return response()->json($post, 202);
+        return response()->json(['message' => 'Post updated successfully'], 202);
     }
 
     /**

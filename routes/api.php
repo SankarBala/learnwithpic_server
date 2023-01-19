@@ -26,21 +26,22 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::apiResource('/category', CategoryController::class)->scoped(['category' => 'slug']);
-Route::get('just-categories', [CategoryController::class, 'just_categories'])->name('just-categories');
+Route::middleware('visitor')->group(function () {
+
+    Route::apiResource('/category', CategoryController::class)->scoped(['category' => 'slug']);
+    Route::get('just-categories', [CategoryController::class, 'just_categories'])->name('just-categories');
 
 
-Route::apiResource('/tag', TagController::class)->scoped(['tag' => 'slug']);
-Route::get('just-tags', [TagController::class, 'just_tags'])->name('just-tags');
+    Route::apiResource('/tag', TagController::class)->scoped(['tag' => 'slug']);
+    Route::get('just-tags', [TagController::class, 'just_tags'])->name('just-tags');
 
-// Post related routes
-Route::post('/post/execute', [PostController::class, 'execute'])->name('post.action');
-Route::get('/post/months', [PostController::class, 'created_months'])->name('post.months');
-Route::apiResource('/post', PostController::class)->scoped(['post' => 'slug']);
+    // Post related routes
+    Route::post('/post/execute', [PostController::class, 'execute'])->name('post.action');
+    Route::get('/post/months', [PostController::class, 'created_months'])->name('post.months');
+    Route::apiResource('/post', PostController::class)->scoped(['post' => 'slug']);
 
-// Step related routes
-Route::apiResource('/step', StepController::class)->scoped(['step' => 'slug']);
+    // Step related routes
+    Route::apiResource('/step', StepController::class)->scoped(['step' => 'slug']);
 
-Route::post('/file-manager/ckeditor/upload', [FileController::class, 'saveCKEditorImage']);
-
-
+    Route::post('/file-manager/ckeditor/upload', [FileController::class, 'saveCKEditorImage']);
+});

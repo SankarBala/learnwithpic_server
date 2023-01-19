@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
@@ -17,11 +18,6 @@ class Post extends Model
     {
         return Carbon::parse($value)->format('Y-m-d h:i A');
     }
-
-    public function getImageAttribute($value){
-        return "http://localhost:8000/storage/posts/featured_images/1673871207.png";
-    }
-
 
     public function author()
     {
