@@ -22,7 +22,7 @@ class VisitorTracer
         $visitor = new Visitor();
         $visitor->user_id = auth()->id() ?? 0;
         $visitor->ip = $request->ip();
-        $visitor->route = $request->url();
+        $visitor->route = $request->path();
         $visitor->user_agent = $request->userAgent();
         $visitor->location = json_encode(Location::get('103.120.223.98'));
         $visitor->refferer = $request->headers->get('referer');

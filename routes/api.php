@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StepController;
 use App\Http\Controllers\TagController;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,4 +47,21 @@ Route::middleware('visitor')->group(function () {
     Route::apiResource('/step', StepController::class)->scoped(['step' => 'slug']);
 
     Route::post('/file-manager/ckeditor/upload', [FileController::class, 'saveCKEditorImage']);
+
+});
+
+// Dashboard resources/statistics api 
+Route::prefix('statistic')->group(function () {
+    Route::get('post', [DashboardController::class, 'posts']);
+    Route::get('user', [DashboardController::class, 'users']);
+    Route::get('visitor', [DashboardController::class, 'visitors']);
+    Route::get('traffic_chart', [DashboardController::class, 'traffic_chart']);
+});
+
+Route::get('rnp', function () {
+    $user = User::find(6);
+    $user->assignRole(['visitor']);
+    
+    
+    return  $user;
 });
